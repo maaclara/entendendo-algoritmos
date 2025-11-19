@@ -1,0 +1,36 @@
+name: 🔮 Verificação Mística (CI)
+
+# Quando esse robô acorda?
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  auditoria-de-codigo:
+    runs-on: ubuntu-latest # A máquina virtual que o GitHub empresta
+
+    steps:
+    # 1. Baixa seu código na máquina do GitHub
+    - name: 📥 Baixando o grimório (Checkout)
+      uses: actions/checkout@v3
+
+    # 2. Instala o Python lá
+    - name: 🐍 Invocando o Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    # 3. Instala o Flake8 (nosso auditor)
+    - name: 📦 Instalando ferramentas de magia
+      run: |
+        python -m pip install --upgrade pip
+        pip install flake8
+
+    # 4. Roda a verificação!
+    - name: 🧹 Passando o Pente Fino (Linting)
+      run: |
+        # Procura erros de sintaxe ou nomes indefinidos (Se achar, FALHA o build ❌)
+        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+        
+        # Procura problemas de estilo (código feio), mas não trava o build (apenas avisa)
+        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
